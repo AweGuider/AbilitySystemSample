@@ -1,0 +1,12 @@
+# Unreal
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+*.VC.db
+*.sln.iml
+
+# Rider/VS
+.idea/
+.vscode/
