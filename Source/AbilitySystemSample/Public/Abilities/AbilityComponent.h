@@ -15,7 +15,8 @@ class ABILITYSYSTEMSAMPLE_API UAbilityComponent : public UActorComponent
 public:	
 	UAbilityComponent();
 
-	bool TryActivateAbility(FName AbilityId);
+	bool TryActivateAbility(FName AbilityId) const;
+	UAbility* FindAbility(FName AbilityId) const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -23,5 +24,5 @@ protected:
 
 private:
 	UPROPERTY()
-	TObjectPtr<UDashAbility> DashAbility;
+	TMap<FName, TObjectPtr<UAbility>> Abilities;
 };

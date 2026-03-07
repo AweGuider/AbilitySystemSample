@@ -2,9 +2,10 @@
 
 #include "Abilities/AbilityComponent.h"
 
-void UAbility::Initialize(UAbilityComponent* InOwnerComp)
+void UAbility::Initialize(UAbilityComponent* InOwnerComp, const FName InAbilityId)
 {
 	OwnerComp = InOwnerComp;
+	AbilityId = InAbilityId;
 }
 
 bool UAbility::CanActivate(EAbilityFailReason& OutReason) const

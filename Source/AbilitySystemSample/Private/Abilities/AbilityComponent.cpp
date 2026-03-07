@@ -5,38 +5,48 @@ UAbilityComponent::UAbilityComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-bool UAbilityComponent::TryActivateAbility(FName AbilityId)
+bool UAbilityComponent::TryActivateAbility(const FName AbilityId) const
 {
-	if (AbilityId != "Dash")
+	UAbility* Ability = FindAbility(AbilityId);
+	if (!Ability)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[AbilityComponent] Unknown ability ID '%s'"), *AbilityId.ToString());
-		return false;
-	}
-
-	if (!ensure(DashAbility))
-	{
+		UE_LOG(LogTemp, Warning, TEXT("[AbilityComponent] Ability '%s' not found"), *AbilityId.ToString());
 		return false;
 	}
 
 	EAbilityFailReason Reason = EAbilityFailReason::None;
-	if (!DashAbility-> CanActivate(Reason))
+	if (!Ability-> CanActivate(Reason))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[AbilityComponent] Failed to activate ability '%s'. Reason: %d"), *AbilityId.ToString(), (int32)Reason);
+		UE_LOG(LogTemp, Warning, TEXT("[AbilityComponent] Ability '%s' failed. Reason: %d"), *AbilityId.ToString(), (int32)Reason);
 		return false;
 	}
 
-	DashAbility->Activate();
+	Ability->Activate();
+	UE_LOG(LogTemp, Log, TEXT("[AbilityComponent] Activated ability '%s'"), *AbilityId.ToString());
 	return true;
+}
+
+UAbility* UAbilityComponent::FindAbility(FName AbilityId) const
+{
+	if (const TObjectPtr<UAbility>* Found = Abilities.Find(AbilityId))
+	{
+		return Found->Get();
+	}
+	return nullptr;
 }
 
 void UAbilityComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	DashAbility = NewObject<UDashAbility>(this);
-	if (ensure(DashAbility))
+	UDashAbility* Dash = NewObject<UDashAbility>(this);
+	if (ensure(Dash))
 	{
-		DashAbility->Initialize(this);
+		Dash->Initialize(this, "Dash");
+		ensureMsgf(!Abilities.Contains(Dash->GetAbilityId()),
+			TEXT("Duplicate ability ID '%s'"), *Dash->GetAbilityId().ToString());
+
+		Abilities.Add(Dash->GetAbilityId(), Dash);
 	}
 }
 
