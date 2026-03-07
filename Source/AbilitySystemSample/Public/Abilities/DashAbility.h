@@ -6,7 +6,7 @@
 
 #include "DashAbility.generated.h"
 
-UCLASS()
+UCLASS(BlueprintType)
 class ABILITYSYSTEMSAMPLE_API UDashAbility : public UAbility
 {
 	GENERATED_BODY()
@@ -14,11 +14,4 @@ class ABILITYSYSTEMSAMPLE_API UDashAbility : public UAbility
 public:
 	virtual bool CanActivate(EAbilityFailReason& OutReason) const override;
 	virtual void Activate() override;
-
-	virtual float GetCooldownSeconds() const override { return CooldownSeconds;}
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Dash")
-	float Strength = 1500.f;
-	UPROPERTY(EditDefaultsOnly, Category = "Dash", meta=(ClampMin="0"))
-	float CooldownSeconds = 1.0f;
 };

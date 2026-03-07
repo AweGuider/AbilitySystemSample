@@ -36,6 +36,9 @@ protected:
 private:
 	void StartCooldown(FName AbilityId, float CooldownSeconds);
 	void HandleCooldownFinished(FName AbilityId);
+
+	UPROPERTY(EditAnywhere, Category="Abilities")
+	TArray<TObjectPtr<const UAbilityData>> AbilityDataAssets;
 	
 	UPROPERTY()
 	TMap<FName, TObjectPtr<UAbility>> Abilities;

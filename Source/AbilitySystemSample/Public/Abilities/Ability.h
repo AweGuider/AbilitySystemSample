@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Data/AbilityData.h"
+
 #include "CoreMinimal.h"
 
 #include "Ability.generated.h"
@@ -29,15 +31,16 @@ static const TCHAR* LexToString(EAbilityFailReason Reason)
 	}
 }
 
-UCLASS(Abstract)
+UCLASS(Abstract, BlueprintType)
 class ABILITYSYSTEMSAMPLE_API UAbility : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	void Initialize(UAbilityComponent* InOwnerComp, const FName InAbilityId);
+	void Initialize(UAbilityComponent* InOwnerComp, const UAbilityData* InData);
 
 	FName GetAbilityId() const { return AbilityId; }
+	const UAbilityData* GetData() const { return Data; }
 
 	virtual bool CanActivate(EAbilityFailReason& OutReason) const;
 	virtual void Activate();
@@ -48,6 +51,10 @@ protected:
 	UAbilityComponent* GetOwnerComp() const { return OwnerComp.Get(); }
 	AActor* GetAvatarActor() const;
 	
-	TWeakObjectPtr<UAbilityComponent> OwnerComp;
+	UPROPERTY()
 	FName AbilityId;
+	UPROPERTY()
+	TObjectPtr<const UAbilityData> Data = nullptr;
+	
+	TWeakObjectPtr<UAbilityComponent> OwnerComp;
 };

@@ -33,7 +33,9 @@ bool UAbilityComponent::TryActivateAbility(const FName AbilityId)
 	Ability->Activate();
 
 	OnAbilityActivated.Broadcast(AbilityId, Ability);
-	StartCooldown(AbilityId, Ability->GetCooldownSeconds());
+	const UAbilityData* Data = Ability->GetData();
+	const float Cooldown = Data ? Data->CooldownSeconds : 0.f;
+	StartCooldown(AbilityId, Cooldown);
 	
 	UE_LOG(LogTemp, Log, TEXT("[AbilityComponent] Activated ability '%s'"), *AbilityId.ToString());
 	return true;
@@ -74,14 +76,44 @@ void UAbilityComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UDashAbility* Dash = NewObject<UDashAbility>(this);
-	if (ensure(Dash))
-	{
-		Dash->Initialize(this, "Dash");
-		ensureMsgf(!Abilities.Contains(Dash->GetAbilityId()),
-			TEXT("Duplicate ability ID '%s'"), *Dash->GetAbilityId().ToString());
+	Abilities.Reset();
 
-		Abilities.Add(Dash->GetAbilityId(), Dash);
+	if (AbilityDataAssets.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[AbilitySystem] No AbilityDataAssets assigned on %s"), *GetOwner()->GetName());
+		return;
+	}
+
+	for (const UAbilityData* Data : AbilityDataAssets)
+	{
+		if (!ensureMsgf(Data, TEXT("[AbilitySystem] Null AbilityDataAssets entry on %s"), *GetOwner()->GetName()))
+		{
+			continue;
+		}
+		if (!ensureMsgf(!Data->AbilityId.IsNone(), TEXT("[AbilitySystem] AbilityData '%s' has invalid AbilityId"), *Data->GetName()))
+		{
+			continue;
+		}
+		if (!ensureMsgf(Data->AbilityClass, TEXT("[AbilitySystem] AbilityData '%s' has null AbilityClass"), *Data->GetName()))
+		{
+			continue;
+		}
+		if (!ensureMsgf(!Abilities.Contains(Data->AbilityId),
+			TEXT("[AbilitySystem] Duplicate AbilityId '%s' (asset: %s)"),
+			*Data->AbilityId.ToString(), *GetNameSafe(Data)))
+		{
+			continue;
+		}
+
+		UAbility* Ability = NewObject<UAbility>(this, Data->AbilityClass);
+		if (!ensureMsgf(Ability, TEXT("[AbilitySystem] Failed to create ability instance from class '%s' for id %s"),
+			*GetNameSafe(*Data->AbilityClass), *Data->AbilityId.ToString()))
+		{
+			continue;
+		}
+
+		Ability->Initialize(this, Data);
+		Abilities.Add(Data->AbilityId, Ability);
 	}
 }
 

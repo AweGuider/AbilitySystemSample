@@ -1,4 +1,5 @@
 #include "Abilities/DashAbility.h"
+#include "Abilities/Data/DashAbilityData.h"
 
 #include "GameFramework/Character.h"
 
@@ -26,6 +27,13 @@ void UDashAbility::Activate()
 	{
 		return;
 	}
+
+	const UDashAbilityData* DashData = Cast<UDashAbilityData>(GetData());
+	if (!ensureMsgf(DashData, TEXT("[DashAbility] Requires UDashAbilityData")))
+	{
+		return;
+	}
+	const float Strength = DashData->Strength;
 	
 	const FVector Dir = Character->GetActorForwardVector().GetSafeNormal();
 	Character->LaunchCharacter(Dir * Strength, true, true);
