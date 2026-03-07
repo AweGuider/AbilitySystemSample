@@ -9,8 +9,8 @@ bool UDashAbility::CanActivate(EAbilityFailReason& OutReason) const
 		return false;
 	}
 
-	const ACharacter* Char = Cast<ACharacter>(GetAvatarActor());
-	if (!Char || !Char->GetCharacterMovement())
+	const ACharacter* Character = Cast<ACharacter>(GetAvatarActor());
+	if (!Character || !Character->GetCharacterMovement())
 	{
 		OutReason = EAbilityFailReason::InvalidOwner;
 		return false;
@@ -21,19 +21,12 @@ bool UDashAbility::CanActivate(EAbilityFailReason& OutReason) const
 
 void UDashAbility::Activate()
 {
-	ACharacter* Char = Cast<ACharacter>(GetAvatarActor());
-	if (!ensure(Char))
+	ACharacter* Character = Cast<ACharacter>(GetAvatarActor());
+	if (!ensure(Character))
 	{
 		return;
 	}
 	
-	const FVector Dir = Char->GetActorForwardVector().GetSafeNormal();
-	Char->LaunchCharacter(Dir * Strength, true, true);
-
-	UE_LOG(LogTemp, Log, TEXT("[Ability] Dash activated!"));
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.2, FColor::Green, TEXT("Dash activated"));
-	}
+	const FVector Dir = Character->GetActorForwardVector().GetSafeNormal();
+	Character->LaunchCharacter(Dir * Strength, true, true);
 }

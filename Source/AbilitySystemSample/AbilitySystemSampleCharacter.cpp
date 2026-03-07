@@ -69,6 +69,37 @@ void AAbilitySystemSampleCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	if (!ensure(AbilityComponent))
+	{
+		return;
+	}
+	AbilityComponent->OnAbilityActivated.AddLambda([](FName Id, UAbility* /*Ability*/)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1.2f, FColor::Green,
+				FString::Printf(TEXT("Activated: %s"), *Id.ToString()));
+		}
+	});
+	AbilityComponent->OnAbilityFailed.AddLambda([](FName Id, EAbilityFailReason Reason, float Cooldown)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1.2f, FColor::Red,
+				FString::Printf(TEXT("Failed: %s. (Reason: %s. CD: %.1f)"),
+					*Id.ToString(), LexToString(Reason), Cooldown));
+		}
+	});
+	AbilityComponent->OnCooldownChanged.AddLambda([](FName Id, float Remaining)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1.2f, FColor::Yellow,
+				FString::Printf(TEXT("Cooldown: %s. (Remaining: %.1f)"),
+					*Id.ToString(), Remaining));
+		}
+	});
 }
 
 //////////////////////////////////////////////////////////////////////////
