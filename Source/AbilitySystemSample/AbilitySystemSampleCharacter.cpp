@@ -126,6 +126,7 @@ void AAbilitySystemSampleCharacter::SetupPlayerInputComponent(UInputComponent* P
 	}
 
 	PlayerInputComponent->BindKey(EKeys::One, IE_Pressed, this, &AAbilitySystemSampleCharacter::OnAbility1);
+	PlayerInputComponent->BindKey(EKeys::Two, IE_Pressed, this, &AAbilitySystemSampleCharacter::OnAbility2);
 }
 
 void AAbilitySystemSampleCharacter::Move(const FInputActionValue& Value)
@@ -169,5 +170,13 @@ void AAbilitySystemSampleCharacter::OnAbility1()
 	if (ensure(AbilityComponent))
 	{
 		AbilityComponent->TryActivateAbility("Dash");
+	}
+}
+
+void AAbilitySystemSampleCharacter::OnAbility2()
+{
+	if (ensure(AbilityComponent))
+	{
+		AbilityComponent->TryActivateAbility("Projectile");
 	}
 }

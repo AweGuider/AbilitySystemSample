@@ -2,7 +2,7 @@
 
 UAbilityComponent::UAbilityComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 bool UAbilityComponent::TryActivateAbility(const FName AbilityId)
