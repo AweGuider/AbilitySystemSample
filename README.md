@@ -4,7 +4,10 @@ A small Unreal Engine 5 gameplay subsystem demonstrating **clean C++ structure**
 
 This is intentionally not a full gameplay prototype. The focus is a **reusable gameplay framework component** that could live inside a real project.
 
-![Ability System Demo](Docs/AbilitySystemSampleShowcase_Compressed.mp4)
+<!--[Ability System Demo](Docs/AbilitySystemSampleShowcase.gif)-->
+<p align="center">
+ <img src="Docs/AbilitySystemSampleShowcase.gif" alt="Ability System Demo" />
+<p>
 
 ## What this shows
 
