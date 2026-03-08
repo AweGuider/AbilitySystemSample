@@ -67,6 +67,8 @@ protected:
 	void OnAbility1();
 	UFUNCTION()
 	void OnAbility2();
+	UFUNCTION()
+	void OnAbility3();
 
 public:
 	/** Returns CameraBoom subobject **/

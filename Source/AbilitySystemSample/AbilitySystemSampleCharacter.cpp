@@ -127,6 +127,7 @@ void AAbilitySystemSampleCharacter::SetupPlayerInputComponent(UInputComponent* P
 
 	PlayerInputComponent->BindKey(EKeys::One, IE_Pressed, this, &AAbilitySystemSampleCharacter::OnAbility1);
 	PlayerInputComponent->BindKey(EKeys::Two, IE_Pressed, this, &AAbilitySystemSampleCharacter::OnAbility2);
+	PlayerInputComponent->BindKey(EKeys::Three, IE_Pressed, this, &AAbilitySystemSampleCharacter::OnAbility3);
 }
 
 void AAbilitySystemSampleCharacter::Move(const FInputActionValue& Value)
@@ -178,5 +179,13 @@ void AAbilitySystemSampleCharacter::OnAbility2()
 	if (ensure(AbilityComponent))
 	{
 		AbilityComponent->TryActivateAbility("Projectile");
+	}
+}
+
+void AAbilitySystemSampleCharacter::OnAbility3()
+{
+	if (ensure(AbilityComponent))
+	{
+		AbilityComponent->TryActivateAbility("PulseScan");
 	}
 }
