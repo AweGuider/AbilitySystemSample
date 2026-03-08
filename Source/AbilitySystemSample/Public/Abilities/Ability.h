@@ -8,6 +8,8 @@
 
 class UAbilityComponent;
 
+DECLARE_LOG_CATEGORY_EXTERN(LogAbilitySystem, Log, All);
+
 UENUM()
 enum class EAbilityFailReason : uint8
 {
@@ -18,7 +20,7 @@ enum class EAbilityFailReason : uint8
 	Blocked,
 };
 
-static const TCHAR* LexToString(EAbilityFailReason Reason)
+inline const TCHAR* LexToString(EAbilityFailReason Reason)
 {
 	switch (Reason)
 	{

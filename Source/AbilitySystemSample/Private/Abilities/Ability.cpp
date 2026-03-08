@@ -2,6 +2,8 @@
 
 #include "Abilities/AbilityComponent.h"
 
+DEFINE_LOG_CATEGORY(LogAbilitySystem);
+
 void UAbility::Initialize(UAbilityComponent* InOwnerComp, const UAbilityData* InData)
 {
 	OwnerComp = InOwnerComp;

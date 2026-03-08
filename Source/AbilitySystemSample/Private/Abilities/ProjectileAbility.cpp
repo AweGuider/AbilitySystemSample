@@ -23,7 +23,7 @@ bool UProjectileAbility::CanActivate(EAbilityFailReason& OutReason) const
 		return false;
 	}
 
-	AActor* Avatar = GetAvatarActor();
+	const AActor* Avatar = GetAvatarActor();
 	if (!Avatar || !Avatar->GetWorld())
 	{
 		OutReason = EAbilityFailReason::InvalidOwner;
@@ -77,9 +77,15 @@ void UProjectileAbility::Activate()
 	Params.Instigator = PawnOwner;
 	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-	AAbilityProjectile* Projectile = World->SpawnActor<AAbilityProjectile>(ProjectileData->ProjectileClass, SpawnLoc, AimRot, Params);
+	AAbilityProjectile* Projectile = World->SpawnActor<AAbilityProjectile>(
+		ProjectileData->ProjectileClass,
+		SpawnLoc,
+		AimRot,
+		Params
+	);
 
-	if (!ensureMsgf(Projectile, TEXT("[ProjectileAbility] Failed to spawn projectile for '%s'"), *GetAbilityId().ToString()))
+	if (!ensureMsgf(Projectile, TEXT("[ProjectileAbility] Failed to spawn projectile for '%s'"),
+		*GetAbilityId().ToString()))
 	{
 		return;
 	}

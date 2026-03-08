@@ -10,7 +10,9 @@ bool UAbilityComponent::TryActivateAbility(const FName AbilityId)
 	UAbility* Ability = FindAbility(AbilityId);
 	if (!Ability)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[AbilityComponent] Ability '%s' not found"), *AbilityId.ToString());
+		OnAbilityFailed.Broadcast(AbilityId, EAbilityFailReason::NotFound, 0.f);
+		UE_LOG(LogAbilitySystem, Warning, TEXT("[AbilityComponent] Ability '%s' not found"),
+			*AbilityId.ToString());
 		return false;
 	}
 
@@ -18,7 +20,7 @@ bool UAbilityComponent::TryActivateAbility(const FName AbilityId)
 	if (Remaining > KINDA_SMALL_NUMBER)
 	{
 		OnAbilityFailed.Broadcast(AbilityId, EAbilityFailReason::OnCooldown, Remaining);
-		UE_LOG(LogTemp, Warning, TEXT("[AbilityComponent] Ability '%s' is on cooldown (%.2fs)"),
+		UE_LOG(LogAbilitySystem, Warning, TEXT("[AbilityComponent] Ability '%s' is on cooldown (%.2fs)"),
 			*AbilityId.ToString(), Remaining);
 		return false;
 	}
@@ -26,22 +28,26 @@ bool UAbilityComponent::TryActivateAbility(const FName AbilityId)
 	EAbilityFailReason Reason = EAbilityFailReason::None;
 	if (!Ability-> CanActivate(Reason))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[AbilityComponent] Ability '%s' failed. Reason: %d"), *AbilityId.ToString(), (int32)Reason);
+		OnAbilityFailed.Broadcast(AbilityId, Reason, 0.f);
+		UE_LOG(LogAbilitySystem, Warning, TEXT("[AbilityComponent] Ability '%s' failed. Reason: %d"),
+			*AbilityId.ToString(), (int32)Reason);
 		return false;
 	}
 
 	Ability->Activate();
 
 	OnAbilityActivated.Broadcast(AbilityId, Ability);
+	
 	const UAbilityData* Data = Ability->GetData();
 	const float Cooldown = Data ? Data->CooldownSeconds : 0.f;
 	StartCooldown(AbilityId, Cooldown);
 	
-	UE_LOG(LogTemp, Log, TEXT("[AbilityComponent] Activated ability '%s'"), *AbilityId.ToString());
+	UE_LOG(LogAbilitySystem, Log, TEXT("[AbilityComponent] Activated ability '%s'"),
+		*AbilityId.ToString());
 	return true;
 }
 
-UAbility* UAbilityComponent::FindAbility(FName AbilityId) const
+UAbility* UAbilityComponent::FindAbility(const FName AbilityId) const
 {
 	if (const TObjectPtr<UAbility>* Found = Abilities.Find(AbilityId))
 	{
@@ -50,7 +56,7 @@ UAbility* UAbilityComponent::FindAbility(FName AbilityId) const
 	return nullptr;
 }
 
-float UAbilityComponent::GetCooldownRemaining(FName AbilityId) const
+float UAbilityComponent::GetCooldownRemaining(const FName AbilityId) const
 {
 	const UWorld* World = GetWorld();
 	if (!World)
@@ -67,7 +73,7 @@ float UAbilityComponent::GetCooldownRemaining(FName AbilityId) const
 	return FMath::Max(0.f, *EndTime - Now);
 }
 
-bool UAbilityComponent::IsOnCooldown(FName AbilityId) const
+bool UAbilityComponent::IsOnCooldown(const FName AbilityId) const
 {
 	return GetCooldownRemaining(AbilityId) > KINDA_SMALL_NUMBER;
 }
@@ -80,21 +86,25 @@ void UAbilityComponent::BeginPlay()
 
 	if (AbilityDataAssets.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[AbilitySystem] No AbilityDataAssets assigned on %s"), *GetOwner()->GetName());
+		UE_LOG(LogAbilitySystem, Warning, TEXT("[AbilitySystem] No AbilityDataAssets assigned on %s"),
+			*GetOwner()->GetName());
 		return;
 	}
 
 	for (const UAbilityData* Data : AbilityDataAssets)
 	{
-		if (!ensureMsgf(Data, TEXT("[AbilitySystem] Null AbilityDataAssets entry on %s"), *GetOwner()->GetName()))
+		if (!ensureMsgf(Data, TEXT("[AbilitySystem] Null AbilityDataAssets entry on %s"),
+			*GetOwner()->GetName()))
 		{
 			continue;
 		}
-		if (!ensureMsgf(!Data->AbilityId.IsNone(), TEXT("[AbilitySystem] AbilityData '%s' has invalid AbilityId"), *Data->GetName()))
+		if (!ensureMsgf(!Data->AbilityId.IsNone(), TEXT("[AbilitySystem] AbilityData '%s' has invalid AbilityId"),
+			*Data->GetName()))
 		{
 			continue;
 		}
-		if (!ensureMsgf(Data->AbilityClass, TEXT("[AbilitySystem] AbilityData '%s' has null AbilityClass"), *Data->GetName()))
+		if (!ensureMsgf(Data->AbilityClass, TEXT("[AbilitySystem] AbilityData '%s' has null AbilityClass"),
+			*Data->GetName()))
 		{
 			continue;
 		}
@@ -122,14 +132,14 @@ void UAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UAbilityComponent::StartCooldown(FName AbilityId, float CooldownSeconds)
+void UAbilityComponent::StartCooldown(FName AbilityId, const float CooldownSeconds)
 {
 	if (CooldownSeconds <= 0.f)
 	{
 		return;
 	}
 
-	UWorld* World = GetWorld();
+	const UWorld* World = GetWorld();
 	if (!ensure(World))
 	{
 		return;
@@ -149,7 +159,7 @@ void UAbilityComponent::StartCooldown(FName AbilityId, float CooldownSeconds)
 	World->GetTimerManager().SetTimer(Handle, Delegate, CooldownSeconds, false);
 }
 
-void UAbilityComponent::HandleCooldownFinished(FName AbilityId)
+void UAbilityComponent::HandleCooldownFinished(const FName AbilityId)
 {
 	CooldownEndTimes.Remove(AbilityId);
 

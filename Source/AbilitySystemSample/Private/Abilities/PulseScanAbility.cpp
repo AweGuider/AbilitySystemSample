@@ -28,7 +28,7 @@ bool UPulseScanAbility::CanActivate(EAbilityFailReason& OutReason) const
 
 void UPulseScanAbility::Activate()
 {
-	AActor* Avatar = GetAvatarActor();
+	const AActor* Avatar = GetAvatarActor();
 	if (!ensure(Avatar))
 	{
 		return;
@@ -40,7 +40,7 @@ void UPulseScanAbility::Activate()
 		return;
 	}
 
-	UWorld* World = Avatar->GetWorld();
+	const UWorld* World = Avatar->GetWorld();
 	if (!ensure(World))
 	{
 		return;
@@ -62,7 +62,7 @@ void UPulseScanAbility::Activate()
 		Params
 	);
 
-	UE_LOG(LogTemp, Log, TEXT("[PulseScanAbility] PulseScan '%s': %s (%d results, radius=%.0f)"),
+	UE_LOG(LogAbilitySystem, Log, TEXT("[PulseScanAbility] PulseScan '%s': %s (%d results, radius=%.0f)"),
 		*GetAbilityId().ToString(),
 		bAny ? TEXT("HIT") : TEXT("EMPTY"),
 		Overlaps.Num(),
@@ -73,13 +73,14 @@ void UPulseScanAbility::Activate()
 	{
 		if (AActor* HitActor = Result.GetActor())
 		{
-			UE_LOG(LogTemp, Log, TEXT("  - Hit: %s"), *HitActor->GetActorLabel());
+			UE_LOG(LogAbilitySystem, Log, TEXT("  - Hit: %s"), *HitActor->GetActorLabel());
 		}
 	}
 
 	if (PulseScanData->bDrawDebug)
 	{
-		DrawDebugSphere(World, Center, Radius, 24, bAny ? FColor::Green : FColor::Red, false, PulseScanData->DebugDrawSeconds, 0, 2.f);
+		DrawDebugSphere(World, Center, Radius, 24, bAny ? FColor::Green : FColor::Red,
+			false, PulseScanData->DebugDrawSeconds, 0, 2.f);
 	}
 }
 

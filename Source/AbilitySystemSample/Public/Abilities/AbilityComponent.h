@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DashAbility.h"
+#include "Ability.h"
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
@@ -8,7 +8,8 @@
 #include "AbilityComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnAbilityActivated, FName /*AbilityId*/, UAbility* /*Ability*/);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnAbilitFailed, FName /*AbilityId*/, EAbilityFailReason /*Reason*/, float /*CooldownRemaining*/);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnAbilitFailed, FName /*AbilityId*/, EAbilityFailReason /*Reason*/,
+	float /*CooldownRemaining*/);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCooldownChanged, FName /*AbilityId*/, float /*NewRemaining*/);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -31,7 +32,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+		FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 	void StartCooldown(FName AbilityId, float CooldownSeconds);
