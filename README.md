@@ -33,7 +33,7 @@ This is intentionally not a full gameplay prototype. The focus is a **reusable g
 
 ## How to run
 
-1. Open the `.uproject` in **Unreal Engine 5.x**
+1. Open the `.uproject` in **Unreal Engine 5.3**
 2. Build (Development Editor is fine)
 3. Play In Editor (PIE)
 
