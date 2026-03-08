@@ -8,6 +8,8 @@ This is intentionally not a full gameplay prototype. The focus is a **reusable g
 <p align="center">
  <img src="Docs/AbilitySystemSampleShowcase.gif" alt="Ability System Demo" />
 <p>
+ 
+> For better quality showcase refer to `Docs/AbilitySystemSampleShowcase_Compressed.mp4`.
 
 ## What this shows
 
