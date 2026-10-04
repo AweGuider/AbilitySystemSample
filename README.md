@@ -7,7 +7,7 @@ This is intentionally not a full gameplay prototype. The focus is a **reusable g
 <!--[Ability System Demo](Docs/AbilitySystemSampleShowcase.gif)-->
 <p align="center">
  <img src="Docs/AbilitySystemSampleShowcase.gif" alt="Ability System Demo" />
-<p>
+</p>
  
 > For better quality showcase refer to `Docs/AbilitySystemSampleShowcase_Compressed.mp4`.
 
@@ -116,15 +116,15 @@ Instant sphere query around the player; logs found actors and optionally draws a
 4. Create a DataAsset instance in the editor:
 
    * set `AbilityId`, `AbilityClass`, cooldown/tuning values
-6. Add the DataAsset to `AbilityComponent.AbilityDataAssets`
-7. Bind an input to `TryActivateAbility("MyAbilityId")`
+5. Add the DataAsset to `AbilityComponent.AbilityDataAssets`
+6. Bind an input to `TryActivateAbility("MyAbilityId")`
 
 ---
 
 ## Content / Assets
 
 This repo includes minimal required assets:
-* DataAssets: `DA_Dash`, `DA_Projectile`, `DA_PulseScan`
+* DataAssets: `DA_DashAbility`, `DA_ProjectileAbility`, `DA_PulseScanAbility`
 * Blueprint projectile (visual/debug child): `BP_AbilityProjectile`
 
 ---
